@@ -1,0 +1,61 @@
+version: '2'
+services:
+    
+    # data-www
+    data-www:
+        container_name: ${PROJECT_NAME}_data-www
+        image: busybox
+        volumes:
+            - .${API_DOCUMENT_ROOT}:/app
+
+    ## php-fpm
+    php-fpm:
+        container_name: ${PROJECT_NAME}_php-fpm
+        build: ./docker-assets/php-fpm
+        volumes_from:
+            - data-www
+        volumes:
+            - ./docker-assets/php-fpm/scripts:/scripts
+        depends_on:
+            - mysql
+        links:
+            - mysql        
+        working_dir: ${API_DOCUMENT_ROOT}
+        environment:
+            APP_NAME: ${PROJECT_NAME}docker-assets/php-fpm            
+            APP_ENV: local
+            APP_DEBUG: "true"
+            APP_URL: http://localhost:7778           
+        entrypoint: /scripts/setup.sh
+        command: bash -c "tail -f /dev/null"
+
+    # nginx
+    nginx:
+        container_name: ${PROJECT_NAME}_nginx
+        build: ./docker-assets/nginx
+        volumes_from:
+            - data-www
+        volumes:
+            - ./docker-assets/nginx/conf.d:/etc/nginx/conf.d
+        links:
+            - php-fpm
+        ports:
+            - "${NGINX_PORT}:8080"
+            - "${NGINX_SECURE_PORT}:443"
+        working_dir: ${API_DOCUMENT_ROOT}
+
+    # mysql
+    mysql:
+        container_name: ${PROJECT_NAME}_mysql
+        image: mysql:8.0.16
+        volumes:
+            - ./docker-assets/mysql/custom.cnf:/etc/mysql/conf.d/custom.cnf
+            - ./mysql_data:/var/lib/mysql
+            - ./dump:/docker-entrypoint-initdb.d
+        ports:
+             - "${MYSQL_PORT_HOST}:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
