@@ -58,7 +58,10 @@ docker-compose down
 
 6) Ok. You have the environment built. So you must config the REST API.
 ```
-cp app
+cd app
+``` 
+
+``` 
 cp .env.example .env
 ``` 
 
