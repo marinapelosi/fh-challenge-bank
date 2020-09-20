@@ -121,6 +121,6 @@ You must see these following tests
 
 The API URL in your local machine is gonna be: http://localhost:7778/
 
+The API URL working on Digital Ocean: http://157.245.88.105:7778/
+
 REST API Repo: https://github.com/marinapelosi/fh-challenge-bank-api
-
-
