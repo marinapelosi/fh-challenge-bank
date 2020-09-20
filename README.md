@@ -22,7 +22,7 @@ Let's go!
 git clone --recursive git@github.com:marinapelosi/fh-challenge-bank.git
 ``` 
 
-3) Make the .env.example copy and create your .env file
+3) Make the .env.example copy and create your .env file, inside the root path of the environment
 ``` 
 cp .env.example .env
 ``` 
